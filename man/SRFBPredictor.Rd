@@ -61,3 +61,4 @@ SRFBPredictor(training_data_exp_matrix = training_em, training_data_phenodata = 
               biomarker = biomarker)
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
+}
