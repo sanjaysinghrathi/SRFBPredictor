@@ -10,7 +10,7 @@ SRFBPredictor is a package to predict the reponse of a colorectal cancer patient
 \usage{
 SRFBPredictor(training_data_exp_matrix, training_data_phenodata,
               testing_data_exp_matrix, testing_data_phenodata,
-              biomarker)
+              biomarker, combat=TRUE, mlmodel="elastic-net")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,7 +18,9 @@ SRFBPredictor(training_data_exp_matrix, training_data_phenodata,
   \item{training_data_phenodata}{Phenodata (clinical) data for training dataset having samples as rows and various clinical attributes as columns. Response should be first column followed by other important clinical attributes}
   \item{testing_data_exp_matrix}{Expression matrix for test dataset having probes as rows and samples as columns}
   \item{testing_data_phenodata}{Phenodata (clinical) data for test dataset having samples as rows and various clinical attributes as columns. Response should be first column followed by other important clinical attributes. Columns for test phenodata should be same as training dataset}
-  \item{biomarker}{Signature to be test.}
+  \item{biomarker}{A character vector having gene names or probe names to be tested as signature}
+  \item{combat}{True to adjust testing dataset gene expression values by keeping training set as reference}
+  \item{mlmodel}{Machine learning model to predict responses ("elastic-net", "svmLinear", "svmNonLinear", "neuralNet", "randomForest")}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
