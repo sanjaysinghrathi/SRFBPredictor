@@ -144,8 +144,14 @@ SRFBPredictor <- function(training_data_exp_matrix, training_data_phenodata, tes
     model
     internal <- max(model$results$Accuracy, na.rm = TRUE)
     
+    predictions <- predict(model, newdata = testing_data, type = "prob")
+    row.names(predictions) <- row.names(testing_data)
+    predictions_prob <- data.frame(predictions)
+    
     predictions <- predict(model, newdata = testing_data)
     predictions
+    predictions_prob$Predicted_class <- predictions
+    predictions_prob$Actual_class <- testing_data$response
     
     if(nlevels(as.factor(predictions))==nlevels(as.factor(testing_data$response))){
       confusionMatrix(predictions, testing_data$response )
@@ -155,15 +161,22 @@ SRFBPredictor <- function(training_data_exp_matrix, training_data_phenodata, tes
     }
   }
   if(mlmodel == "svmLinear"){
-    trctrl <- trainControl(method = "LOOCV", allowParallel = TRUE)
-    grid <- expand.grid(C = c(0, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2,5))
+    trctrl <- trainControl(method = "LOOCV", allowParallel = TRUE, classProbs =  TRUE)
+    grid <- expand.grid(C = c(0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2,5))
     set.seed(2345)
-    garbage <- capture.output(suppressWarnings(svm_Linear_Grid <- train(response ~., data = training_data, method = "svmLinear", trControl=trctrl, preProcess = c("center", "scale"), tuneGrid = grid, tuneLength = 10)))
+    garbage <- capture.output(suppressWarnings(svm_Linear_Grid <- train(response ~., data = training_data, method = "svmLinear", trControl=trctrl, preProcess = c("center", "scale"), metric="Accuracy", tuneGrid = grid, tuneLength = 10)))
     svm_Linear_Grid
     internal <- max(svm_Linear_Grid$results$Accuracy, na.rm = TRUE)
     
+    predictions <- predict(svm_Linear_Grid, newdata = testing_data, type = "prob")
+    predictions
+    row.names(predictions) <- row.names(testing_data)
+    predictions_prob <- data.frame(predictions)
+    
     predictions <- predict(svm_Linear_Grid, newdata = testing_data)
     predictions
+    predictions_prob$Predicted_class <- predictions
+    predictions_prob$Actual_class <- testing_data$response
     
     if(nlevels(as.factor(predictions))==nlevels(as.factor(testing_data$response))){
       confusionMatrix(predictions, testing_data$response )
@@ -182,8 +195,14 @@ SRFBPredictor <- function(training_data_exp_matrix, training_data_phenodata, tes
     model
     internal <- max(model$results$Accuracy, na.rm = TRUE)
     
+    predictions <- predict(model, newdata = testing_data, type = "prob")
+    row.names(predictions) <- row.names(testing_data)
+    predictions_prob <- data.frame(predictions)
+    
     predictions <- predict(model, newdata = testing_data)
     predictions
+    predictions_prob$Predicted_class <- predictions
+    predictions_prob$Actual_class <- testing_data$response
     
     if(nlevels(as.factor(predictions))==nlevels(as.factor(testing_data$response))){
       confusionMatrix(predictions, testing_data$response )
@@ -207,8 +226,14 @@ SRFBPredictor <- function(training_data_exp_matrix, training_data_phenodata, tes
     model
     internal <- max(model$results$Accuracy, na.rm = TRUE)
     
+    predictions <- predict(model, newdata = testing_data, type = "prob")
+    row.names(predictions) <- row.names(testing_data)
+    predictions_prob <- data.frame(predictions)
+    
     predictions <- predict(model, newdata = testing_data)
     predictions
+    predictions_prob$Predicted_class <- predictions
+    predictions_prob$Actual_class <- testing_data$response
     
     if(nlevels(as.factor(predictions))==nlevels(as.factor(testing_data$response))){
       confusionMatrix(predictions, testing_data$response )
@@ -218,7 +243,7 @@ SRFBPredictor <- function(training_data_exp_matrix, training_data_phenodata, tes
     }
   }
   if(mlmodel == "svmNonLinear"){
-    numFolds <- trainControl(method = 'LOOCV', allowParallel = TRUE, verbose=TRUE , search = "grid")
+    numFolds <- trainControl(method = 'LOOCV', allowParallel = TRUE, verbose=TRUE , search = "grid", classProbs = TRUE)
     grid <- expand.grid(sigma = c(0,0.01, 0.02, 0.025, 0.03, 0.04, 0.05, 0.06, 0.07,0.08, 0.09, 0.1, 0.25, 0.5, 0.75,0.9),
                         C = c(0,0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1, 1.5, 2,5))
     set.seed(3233)
@@ -226,8 +251,14 @@ SRFBPredictor <- function(training_data_exp_matrix, training_data_phenodata, tes
     model
     internal <- max(model$results$Accuracy, na.rm = TRUE)
     
+    predictions <- predict(model, newdata = testing_data, type = "prob")
+    row.names(predictions) <- row.names(testing_data)
+    predictions_prob <- data.frame(predictions)
+    
     predictions <- predict(model, newdata = testing_data)
     predictions
+    predictions_prob$Predicted_class <- predictions
+    predictions_prob$Actual_class <- testing_data$response
     
     if(nlevels(as.factor(predictions))==nlevels(as.factor(testing_data$response))){
       confusionMatrix(predictions, testing_data$response )
@@ -236,6 +267,6 @@ SRFBPredictor <- function(training_data_exp_matrix, training_data_phenodata, tes
       pred <- predictions
     }
   }
-  
-  return(list(Train_PCA=plot1, Test_PCA= plot2, TrainTest_PCA= plot3, Model_Internal_Accuracy=internal, Model_Prediction_Accuracy=pred))
+  return(list(Train_PCA=plot1, Test_PCA= plot2, TrainTest_PCA= plot3, Model_Internal_Accuracy=internal, Model_Prediction_Probabilities=predictions_prob, Model_Prediction_Accuracy=pred))
 }
+
