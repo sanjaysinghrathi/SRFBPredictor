@@ -98,10 +98,11 @@ SRFBPredictor <- function(training_data_exp_matrix, training_data_phenodata, tes
   #' PCA after Decision making genes discovery in traing+testing set
   ee <- cbind(training_em_new, testing_em_new)
   pcDat <- prcomp(t(ee[biomarker,]), scale. = TRUE)
+  batch <- c(rep("Train", dim(training_em)[2]),rep("Test", dim(testing_em)[2]))
   plot3 <- autoplot(pcDat,
-           data = rbind(training_pData, testing_pData),
+           data = cbind(rbind(training_pData, testing_pData), batch),
            colour="response",
-           shape="response",
+           shape="batch",
            label=FALSE,
            main="PCA for training + testing data w.r.t. response",
            size=2)
